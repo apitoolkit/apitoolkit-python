@@ -46,7 +46,7 @@ def observe_request(parent_request, url_wildcard=None, redact_headers=[], redact
         clientInfo = apitoolkitClient.getInfo()
         print(clientInfo)
         payload = build_payload(start_time, req, response, req.content.decode(), response.text,
-                                redact_request_body, redact_response_body, redact_headers, clientInfo["project_id"], clientInfo["service_veresion"], [], clientInfo["tags"], message_id, url_wildcard)
+                                redact_request_body, redact_response_body, redact_headers, clientInfo["project_id"], clientInfo["service_version"], [], clientInfo["tags"], message_id, url_wildcard)
         apitoolkitClient.publish_message(payload)
 
     client = httpx.Client(event_hooks={'request': [
@@ -87,7 +87,7 @@ def build_payload(start_time, req, res, req_body, resp_body, redact_request_body
         "request_headers": redact_headers(req_headers, redact_header_lists),
         "response_body": base64.b64encode(redact_fields(resp_body, redact_response_body).encode()).decode(),
         "response_headers": redact_headers(res_headers, redact_header_lists),
-        "sdk_type": "PythonOutgoing",
+        "sdk_type": "GoOutgoing",
         "status_code": res.status_code if res else 404,
         "timestamp": timestamp,
         "url_path": url_path,
