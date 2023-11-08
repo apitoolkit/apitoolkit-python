@@ -1,59 +1,59 @@
 import base64
-import datetime
 import time
+from datetime import datetime
 import traceback
 import requests
-from jsonpath_ng import parse
+from jsonpath_ng import parse  # type: ignore
 import json
+import pytz  # type: ignore
+import httpx  # type: ignore
 
 
-def observe_requests(parentRequest, url_wildcard=None, redact_headers=None, redact_request_body=None, redact_response_body=None):
-    session = requests.Session()
+def observe_request(parent_request, url_wildcard=None, redact_headers=[], redact_request_body=[], redact_response_body=[]):
     start_time = 0
     req = None
 
-    def on_request_prepared(request, *args, **kwargs):
+    def on_request(request):
         nonlocal start_time, req
         start_time = time.perf_counter_ns()
         req = request
-        print("Request URL:", request.url)
-        print("Request Headers:", request.headers)
-        print("Request Data:", request.data)
+        print(f"Request URL: {request.url}")
+        print(f"Request Headers: {request.headers}")
+        print(f"Request Data: {request.content.decode()}")
         return request
 
-    def on_response_received(response, *args, **kwargs):
-        print("Response URL:", response.url)
-        print("Response Headers:", response.headers)
-
+    def on_response(response):
+        print(f"Response URL: {response.url}")
+        print(f"Response Headers: {response.headers}")
         if response.status_code >= 400:
-            print("HTTP Error:", response.status_code)
-            print("Response Content:", response.text)
-
+            print(f"HTTP Error: {response.status_code}")
+            print(f"Response Content: {response.text}")
+        response.read()
         if response.status_code == 200:
-            print("Response Content:", response.text)
-        errors = parentRequest.get("apitoolkit_errors", None)
-        if errors is None:
-            print(
-                "No errors found attached to request, make sure middleware is configure correctly")
+            print(f"Response Content: {response.text}")
+        response.read()
 
-        message_id = parentRequest.get("apitoolkit_message_id", None)
+        message_id = parent_request.apitoolkit_message_id
         if message_id is None:
             print(
-                "No message_id found attached to request, make sure middleware is configure correctly")
-        client = parentRequest.get("apitoolkit_client", None)
-        if client is None:
+                "No message_id found attached to request, make sure middleware is configured correctly")
+
+        # You can access the client from the parent_request or any other data needed
+        apitoolkitClient = parent_request.apitoolkit_client
+        if apitoolkitClient is None:
             print(
-                "No client found attached to request, make sure middleware is configure correctly")
+                "No client found attached to request, make sure middleware is configured correctly")
+        clientInfo = apitoolkitClient.getInfo()
+        print(clientInfo)
+        payload = build_payload(start_time, req, response, req.content.decode(), response.text,
+                                redact_request_body, redact_response_body, redact_headers, clientInfo["project_id"], None, [], [], message_id, url_wildcard)
+        print(payload)
+        apitoolkitClient.publish_message(payload)
 
-        payload = build_payload(start_time, req, req.data, response.text, redact_request_body, redact_response_body,
-                                redact_headers, client.project_id, client.service_version, [], client.tags, message_id, url_wildcard)
-        client.publishMessage(payload)
-        return response
+    client = httpx.Client(event_hooks={'request': [
+        on_request], 'response': [on_response]})
 
-    session.hooks['pre_request'] = [on_request_prepared]
-    session.hooks['response'] = [on_response_received]
-
-    return session
+    return client
 
 
 def build_payload(start_time, req, res, req_body, resp_body, redact_request_body, redact_response_body, redact_header_lists, project_id, service_version, errors, tags, parent_id, url_wildcard):
@@ -69,26 +69,28 @@ def build_payload(start_time, req, res, req_body, resp_body, redact_request_body
 
     path_and_query = get_path_and_query_params_from_url(req.url) if req.url else {
         "path": "", "queryParams": {}, "rawUrl": ""}
-    url_path = url_wildcard or path_and_query["path"]
+    url_path = url_wildcard or req.url.path
+    timezone = pytz.timezone("UTC")
+    timestamp = datetime.now(timezone).isoformat()
 
     payload = {
-        "duration": int((time.time() * 1000000000) - start_time),
-        "host": req.url if req.url else "",
+        "duration": time.perf_counter_ns() - start_time,
+        "host": req.url.host if req.url else "",
         "method": req.method.upper() if req.method else "",
         "path_params": {},
         "project_id": project_id,
         "proto_minor": 1,
         "proto_major": 1,
         "query_params": path_and_query["queryParams"],
-        "raw_url": path_and_query["rawUrl"],
+        "raw_url": req.url.path,
         "referer": req_headers.get("referer", ""),
         "request_body": base64.b64encode(redact_fields(req_body, redact_request_body).encode()).decode(),
         "request_headers": redact_headers(req_headers, redact_header_lists),
         "response_body": base64.b64encode(redact_fields(resp_body, redact_response_body).encode()).decode(),
         "response_headers": redact_headers(res_headers, redact_header_lists),
-        "sdk_type": "PythonOutgoing",
+        "sdk_type": "GoOutgoing",
         "status_code": res.status_code if res else 404,
-        "timestamp": time.strftime("%Y-%m-%dT%H:%M:%S.%fZ", time.gmtime()),
+        "timestamp": timestamp,
         "url_path": url_path,
         "service_version": service_version,
         "errors": errors,
