@@ -5,7 +5,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setup(
     name="apitoolkit-python",
-    version="0.1.1",
+    version="0.1.2",
     packages=find_packages(),
     description='A share python sdk for python web frameworks',
     long_description=long_description,
@@ -14,7 +14,7 @@ setup(
     author='APIToolkit',
     install_requires=[
         'requests',
-        'httpx'
+        'httpx',
         'jsonpath-ng',
     ],
 )
