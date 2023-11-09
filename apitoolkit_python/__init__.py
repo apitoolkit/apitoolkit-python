@@ -34,7 +34,6 @@ def observe_request(parent_request, url_wildcard=None, redact_headers=[], redact
             print(
                 "No client found attached to request, make sure middleware is configured correctly")
         clientInfo = apitoolkitClient.getInfo()
-        print(clientInfo)
         payload = build_payload(start_time, req, response, req.content.decode(), response.text,
                                 redact_request_body, redact_response_body, redact_headers, clientInfo["project_id"], clientInfo["service_version"], [], clientInfo["tags"], message_id, url_wildcard)
         apitoolkitClient.publish_message(payload)
