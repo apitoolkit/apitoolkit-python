@@ -165,4 +165,4 @@ def report_error(request, error):
         errors = request.state.apitoolkit_errors or []
         at_error = ATError(error)
         errors.append(at_error.to_dict())
-        request.apitoolkit_errors = errors
+        request.state.apitoolkit_errors = errors
