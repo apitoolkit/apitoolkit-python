@@ -17,29 +17,19 @@ def observe_request(parent_request, url_wildcard=None, redact_headers=[], redact
         nonlocal start_time, req
         start_time = time.perf_counter_ns()
         req = request
-        print(f"Request URL: {request.url}")
-        print(f"Request Headers: {request.headers}")
-        print(f"Request Data: {request.content.decode()}")
         return request
 
     def on_response(response):
-        print(f"Response URL: {response.url}")
-        print(f"Response Headers: {response.headers}")
-        if response.status_code >= 400:
-            print(f"HTTP Error: {response.status_code}")
-            print(f"Response Content: {response.text}")
         response.read()
-        if response.status_code == 200:
-            print(f"Response Content: {response.text}")
-        response.read()
-
-        message_id = parent_request.apitoolkit_message_id
+        message_id = parent_request.apitoolkit_message_id if hasattr(
+            parent_request, "apitoolkit_message_id") else parent_request.state.apitoolkit_message_id if hasattr(parent_request.state, "apitoolkit_message_id") else None
         if message_id is None:
             print(
                 "No message_id found attached to request, make sure middleware is configured correctly")
 
-        # You can access the client from the parent_request or any other data needed
-        apitoolkitClient = parent_request.apitoolkit_client
+        apitoolkitClient = parent_request.apitoolkit_client if hasattr(
+            parent_request, "apitoolkit_client") else parent_request.state.apitoolkit_client if hasattr(
+            parent_request.state, "apitoolkit_client") else None
         if apitoolkitClient is None:
             print(
                 "No client found attached to request, make sure middleware is configured correctly")
@@ -165,7 +155,14 @@ class ATError:
 
 
 def report_error(request, error):
-    errors = request.apitoolkit_errors or []
-    at_error = ATError(error)
-    errors.append(at_error.to_dict())
-    request.apitoolkit_errors = errors
+    # fast api throws error for trying to access request.apitoolkit_errors
+    try:
+        errors = request.apitoolkit_errors or []
+        at_error = ATError(error)
+        errors.append(at_error.to_dict())
+        request.apitoolkit_errors = errors
+    except Exception as e:
+        errors = request.state.apitoolkit_errors or []
+        at_error = ATError(error)
+        errors.append(at_error.to_dict())
+        request.apitoolkit_errors = errors
