@@ -76,7 +76,7 @@ def build_payload(start_time, req, res, req_body, resp_body, redact_request_body
         "request_headers": redact_headers(req_headers, redact_header_lists),
         "response_body": base64.b64encode(redact_fields(resp_body, redact_response_body).encode()).decode(),
         "response_headers": redact_headers(res_headers, redact_header_lists),
-        "sdk_type": "GoOutgoing",
+        "sdk_type": "PythonOutgoing",
         "status_code": res.status_code if res else 404,
         "timestamp": timestamp,
         "url_path": url_path,
