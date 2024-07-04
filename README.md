@@ -7,7 +7,7 @@
 
 [![APItoolkit SDK](https://img.shields.io/badge/APItoolkit-SDK-0068ff?logo=python)](https://github.com/topics/apitoolkit-sdk) [![PyPI - Version](https://img.shields.io/pypi/v/apitoolkit-python)](https://pypi.org/project/apitoolkit-python) [![PyPI - Downloads](https://img.shields.io/pypi/dw/apitoolkit-python)](https://pypi.org/project/apitoolkit-python) [![Join Discord Server](https://img.shields.io/badge/Chat-Discord-7289da)](https://discord.gg/dEB6EjQnKB) [![APItoolkit Docs](https://img.shields.io/badge/Read-Docs-0068ff)](https://apitoolkit.io/docs/sdks/python?utm_source=github-sdks) 
 
-APItoolkit is an end-to-end API and web services management toolkit for engineers and customer support teams. To integrate your Python application with APItoolkit, you can use any of the [existing Python framework SDKs](https://apitoolkit.io/docs/sdks/python?utm_source=github-sdks) or directly use this `apitoolkit-python` package (the shared code for all the Pythom SDKs) to monitor incoming traffic, aggregate the requests, and then deliver them to the APItoolkit's servers.
+APItoolkit is an end-to-end API and web services management toolkit for engineers and customer support teams. To integrate your Python application with APItoolkit, you can use any of the [existing Python framework SDKs](https://apitoolkit.io/docs/sdks/python?utm_source=github-sdks) or directly use this `apitoolkit-python` package (the shared code for all the Python SDKs) to monitor incoming traffic, aggregate the requests, and then deliver them to the APItoolkit's servers.
 
 </div>
 
