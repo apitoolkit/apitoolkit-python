@@ -4,6 +4,7 @@ from datetime import datetime
 import traceback
 import requests
 from jsonpath_ng import parse  # type: ignore
+import sys
 import json
 import pytz  # type: ignore
 import httpx  # type: ignore
@@ -15,7 +16,7 @@ def observe_request(parent_request, url_wildcard=None, redact_headers=[], redact
 
     def on_request(request):
         nonlocal start_time, req
-        start_time = time.perf_counter_ns()
+        start_time = getPerformanceCounter()
         req = request
         return request
 
@@ -62,7 +63,7 @@ def build_payload(start_time, req, res, req_body, resp_body, redact_request_body
     timestamp = datetime.now(timezone).isoformat()
 
     payload = {
-        "duration": time.perf_counter_ns() - start_time,
+        "duration": getPerformanceCounter() - start_time,
         "host": req.url.host if req.url else "",
         "method": req.method.upper() if req.method else "",
         "path_params": {},
@@ -165,3 +166,12 @@ def report_error(request, error):
         at_error = ATError(error)
         errors.append(at_error.to_dict())
         request.state.apitoolkit_errors = errors
+
+def getPerformanceCounter():
+    versin_info = sys.version_info
+    if versin_info[0] >= 3 and versin_info[1] >= 7:
+        return time.perf_counter_ns()
+    elif versin_info[0] >= 3 and versin_info[1] >= 3:
+        return time.perf_counter() * 1_000_000_000
+    else:
+        return time.time() * 1_000_000_000
