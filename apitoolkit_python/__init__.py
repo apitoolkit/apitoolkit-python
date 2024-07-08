@@ -167,7 +167,7 @@ def report_error(request, error):
         errors.append(at_error.to_dict())
         request.state.apitoolkit_errors = errors
 
-def getPerformanceCounter():
+def performance_counter_ns():
     versin_info = sys.version_info
     if versin_info[0] >= 3 and versin_info[1] >= 7:
         return time.perf_counter_ns()
