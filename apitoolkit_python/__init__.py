@@ -16,11 +16,12 @@ def observe_request(parent_request, url_wildcard=None, redact_headers=[], redact
 
     def on_request(request):
         nonlocal start_time, req
-        start_time = getPerformanceCounter()
+        start_time = performance_counter_ns()
         req = request
         return request
 
     def on_response(response):
+      try:
         response.read()
         message_id = parent_request.apitoolkit_message_id if hasattr(
             parent_request, "apitoolkit_message_id") else parent_request.state.apitoolkit_message_id if hasattr(parent_request.state, "apitoolkit_message_id") else None
@@ -38,7 +39,10 @@ def observe_request(parent_request, url_wildcard=None, redact_headers=[], redact
         payload = build_payload(start_time, req, response, req.content.decode(), response.text,
                                 redact_request_body, redact_response_body, redact_headers, clientInfo["project_id"], clientInfo["service_version"], [], clientInfo["tags"], message_id, url_wildcard)
         apitoolkitClient.publish_message(payload)
-
+      except Exception as e:
+        if False :
+            print("Error publishing message to apitoolkit: " + str(e))
+            
     client = httpx.Client(event_hooks={'request': [
         on_request], 'response': [on_response]})
 
@@ -63,7 +67,7 @@ def build_payload(start_time, req, res, req_body, resp_body, redact_request_body
     timestamp = datetime.now(timezone).isoformat()
 
     payload = {
-        "duration": getPerformanceCounter() - start_time,
+        "duration": performance_counter_ns() - start_time,
         "host": req.url.host if req.url else "",
         "method": req.method.upper() if req.method else "",
         "path_params": {},
