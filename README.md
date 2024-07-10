@@ -5,9 +5,9 @@
 
 ## Python SDKs Shared Code
 
-[![APItoolkit SDK](https://img.shields.io/badge/APItoolkit-SDK-0068ff?logo=python)](https://github.com/topics/apitoolkit-sdk) [![PyPI - Version](https://img.shields.io/pypi/v/apitoolkit-python)](https://pypi.org/project/apitoolkit-python) [![PyPI - Downloads](https://img.shields.io/pypi/dw/apitoolkit-python)](https://pypi.org/project/apitoolkit-python) [![Join Discord Server](https://img.shields.io/badge/Chat-Discord-7289da)](https://discord.gg/dEB6EjQnKB) [![APItoolkit Docs](https://img.shields.io/badge/Read-Docs-0068ff)](https://apitoolkit.io/docs/sdks/python?utm_source=github-sdks) 
+[![APItoolkit SDK](https://img.shields.io/badge/APItoolkit-SDK-0068ff?logo=python)](https://github.com/topics/apitoolkit-sdk) [![PyPI - Version](https://img.shields.io/pypi/v/apitoolkit-python)](https://pypi.org/project/apitoolkit-python) [![PyPI - Downloads](https://img.shields.io/pypi/dw/apitoolkit-python)](https://pypi.org/project/apitoolkit-python) [![Join Discord Server](https://img.shields.io/badge/Chat-Discord-7289da)](https://apitoolkit.io/discord?utm_campaign=devrel&utm_medium=github&utm_source=sdks_readme) [![APItoolkit Docs](https://img.shields.io/badge/Read-Docs-0068ff)](https://apitoolkit.io/docs/sdks/python?utm_campaign=devrel&utm_medium=github&utm_source=sdks_readme) 
 
-APItoolkit is an end-to-end API and web services management toolkit for engineers and customer support teams. To integrate your Python application with APItoolkit, you can use any of the [existing Python framework SDKs](https://apitoolkit.io/docs/sdks/python?utm_source=github-sdks) or directly use this `apitoolkit-python` package (the shared code for all the Python SDKs) to monitor incoming traffic, aggregate the requests, and then deliver them to the APItoolkit's servers.
+APItoolkit is an end-to-end API and web services management toolkit for engineers and customer support teams. To integrate your Python application with APItoolkit, you can use any of the [existing Python framework SDKs](https://apitoolkit.io/docs/sdks/python?utm_campaign=devrel&utm_medium=github&utm_source=sdks_readme) or directly use this `apitoolkit-python` package (the shared code for all the Python SDKs) to monitor incoming traffic, aggregate the requests, and then deliver them to the APItoolkit's servers.
 
 </div>
 
@@ -49,14 +49,14 @@ apitoolkit = APIToolkit(
 
 > [!NOTE]
 > 
->  - The `{ENTER_YOUR_API_KEY_HERE}` demo string should be replaced with the [API key](https://apitoolkit.io/docs/dashboard/settings-pages/api-keys?utm_source=github-sdks) generated from the APItoolkit dashboard.
-> - To learn more configuration options (redacting fields, error reporting, outgoing requests, etc.), please read any of the [Python SDK documentation](https://apitoolkit.io/docs/sdks/python?utm_source=github-sdks).
+>  - The `{ENTER_YOUR_API_KEY_HERE}` demo string should be replaced with the [API key](https://apitoolkit.io/docs/dashboard/settings-pages/api-keys?utm_campaign=devrel&utm_medium=github&utm_source=sdks_readmes) generated from the APItoolkit dashboard.
+> - To learn more configuration options (redacting fields, error reporting, outgoing requests, etc.), please read any of the [Python SDK documentation](https://apitoolkit.io/docs/sdks/python?utm_campaign=devrel&utm_medium=github&utm_source=sdks_readme).
 
 ## Contributing and Help
 
 To contribute to the development of this PROJECT or request help from the community and our team, kindly do any of the following:
 - Read our [Contributors Guide](https://github.com/apitoolkit/.github/blob/main/CONTRIBUTING.md).
-- Join our community [Discord Server](https://discord.gg/dEB6EjQnKB).
+- Join our community [Discord Server](hhttps://apitoolkit.io/discord?utm_campaign=devrel&utm_medium=github&utm_source=sdks_readme).
 - Create a [new issue](https://github.com/apitoolkit/apitoolkit-python/issues/new/choose) in this repository.
 
 ## License
@@ -67,7 +67,6 @@ This repository is published under the [MIT](LICENSE) license.
 
 <div align="center">
     
-<a href="https://apitoolkit.io?utm_source=github-sdks" target="_blank" rel="noopener noreferrer"><img src="https://github.com/apitoolkit/.github/blob/main/images/icon.png?raw=true" width="40" /></a>
+<a href="https://apitoolkit.io?utm_campaign=devrel&utm_medium=github&utm_source=sdks_readme" target="_blank" rel="noopener noreferrer"><img src="https://github.com/apitoolkit/.github/blob/main/images/icon.png?raw=true" width="40" /></a>
 
 </div>
-
