@@ -5,6 +5,7 @@ from django.conf import settings
 from common import observe_request, report_error, set_attributes
 
 observe_request = observe_request
+report_error = report_error
 class APIToolkit:
     def __init__(self, get_response):
         redact_headers = getattr(
