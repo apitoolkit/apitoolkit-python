@@ -12,15 +12,19 @@ class APIToolkit:
             settings, 'APITOOLKIT_REDACT_HEADERS', [])
         debug = getattr(settings, 'APITOOLKIT_DEBUG', False)
         redact_request_body = getattr(
-            settings, 'APITOOLKIT_REDACT_REQ_BODY', [])
+            settings, 'APITOOLKIT_REDACT_REQUEST_BODY', [])
         redact_response_body = getattr(
-            settings, 'APITOOLKIT_REDACT_RES_BODY', [])
+            settings, 'APITOOLKIT_REDACT_RESPONSE_BODY', [])
         self.get_response = get_response
         service_version = getattr(
             settings, "APITOOLKIT_SERVICE_VERSION", None)
         tags = getattr(settings, "APITOOLKIT_TAGS", [])
         service_name = getattr(
             settings, "APITOOLKIT_SERVICE_NAME", "")
+        capture_request_body = getattr(
+            settings, "APITOOLKIT_CAPTURE_REQUEST_BODY", False)
+        capture_response_body = getattr(
+            settings, "APITOOLKIT_CAPTURE_RESPONSE_BODY", False)
         self.config = {redact_headers: redact_headers,
                        debug: debug,
                        redact_request_body: redact_request_body,
@@ -28,7 +32,8 @@ class APIToolkit:
                        tags: tags,
                        service_version: service_version,
                        service_name: service_name,
-
+                       capture_request_body: capture_request_body,
+                       capture_response_body: capture_response_body
                        }
     def process_exception(self, request, exception):
         report_error(request,exception)
