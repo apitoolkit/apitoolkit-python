@@ -110,16 +110,6 @@ def observe_request(parent_request, url_wildcard=None,redact_headers=[], redact_
 
     return client
 
-def redact_headers_func(headers, redact_header_list):
-    redacted_headers = {}
-    for header_name, value in headers.items():
-        if header_name.lower() in redact_header_list or header_name in redact_header_list:
-            redacted_headers[header_name] = "[CLIENT_REDACTED]"
-        else:
-            redacted_headers[header_name] = value
-    return redacted_headers
-
-
 def redact_fields(body, paths):
     try:
         data = json.loads(body)
@@ -132,15 +122,6 @@ def redact_fields(body, paths):
             return body.encode('utf-8')
         return body
 
-
-def redact_headers(headers, redact_header_lists):
-    for header_list in redact_header_lists:
-        for header in header_list:
-            if header in headers:
-                headers[header] = "[REDACTED]"
-    return headers
-
-
 def get_path_and_query_params_from_url(url):
     try:
         parsed_url = requests.utils.urlparse(url)
@@ -150,7 +131,6 @@ def get_path_and_query_params_from_url(url):
         return {"path": path, "queryParams": query_params, "rawUrl": raw_url}
     except Exception as e:
         return {"path": "", "queryParams": {}, "rawUrl": ""}
-
 
 class ATError:
     def __init__(self, error):
