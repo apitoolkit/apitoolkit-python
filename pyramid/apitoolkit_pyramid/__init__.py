@@ -59,7 +59,7 @@ class APIToolkit(object):
         pass
 
     def __call__(self, request: Request):
-        tracer = get_tracer(self.service_name)
+        tracer = get_tracer(self.service_name or "apitoolkit-pyramid-tracer")
         span = tracer.start_span("apitoolkit-http-span")
         if self.debug:
             print("APIToolkit: making request")
@@ -91,20 +91,19 @@ class APIToolkit(object):
             query_params =  {key: value for key, value in request.params.items()}
             request_headers = request.headers
             content_type = request.headers.get('Content-Type', '')
-
-            if content_type == 'application/json':
-                request_body = request.json_body
-            if content_type == 'text/plain':
-                request_body = request.body.decode('utf-8')
-            if content_type == 'application/x-www-form-urlencoded' or 'multipart/form-data' in content_type:
-                request_body = dict(request.POST.copy())
+            if self.capture_request_body:
+             if content_type == 'application/json':
+                 request_body = request.json_body
+             if content_type == 'text/plain':
+                 request_body = request.body.decode('utf-8')
+             if content_type == 'application/x-www-form-urlencoded' or 'multipart/form-data' in content_type:
+                 request_body = dict(request.POST.copy())
 
             url_path = request.matched_route.pattern if request.matched_route is not None else request.path
             path_params = request.matchdict
             request_body = json.dumps(request_body)
             response_headers = response.headers
-            request_body = request_body
-            response_body =  response.body
+            response_body =  response.body if self.capture_response_body else ""
             message_id = request.apitoolkit_message_id
             errors = request.apitoolkit_errors
 
