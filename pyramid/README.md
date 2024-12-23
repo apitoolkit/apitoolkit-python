@@ -29,6 +29,7 @@ Kindly run the command below to install the apitoolkit pyramid sdks and necessar
 
 ```sh
 pip install apitoolkit-pyramid opentelemetry-distro opentelemetry-exporter-otlp
+
 opentelemetry-bootstrap -a install
 ```
 
