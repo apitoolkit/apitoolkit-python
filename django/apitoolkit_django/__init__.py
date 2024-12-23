@@ -25,15 +25,15 @@ class APIToolkit:
             settings, "APITOOLKIT_CAPTURE_REQUEST_BODY", False)
         capture_response_body = getattr(
             settings, "APITOOLKIT_CAPTURE_RESPONSE_BODY", False)
-        self.config = {redact_headers: redact_headers,
-                       debug: debug,
-                       redact_request_body: redact_request_body,
-                       redact_response_body: redact_response_body,
-                       tags: tags,
-                       service_version: service_version,
-                       service_name: service_name,
-                       capture_request_body: capture_request_body,
-                       capture_response_body: capture_response_body
+        self.config = {"redact_headers": redact_headers,
+                       "debug": debug,
+                       "redact_request_body": redact_request_body,
+                       "redact_response_body": redact_response_body,
+                       "tags": tags,
+                       "service_version": service_version,
+                       "service_name": service_name,
+                       "capture_request_body": capture_request_body,
+                       "capture_response_body": capture_response_body
                        }
     def process_exception(self, request, exception):
         report_error(request,exception)
