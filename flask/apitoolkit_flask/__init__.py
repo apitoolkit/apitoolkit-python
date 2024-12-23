@@ -6,7 +6,6 @@ from werkzeug.exceptions import HTTPException
 from opentelemetry.trace import get_tracer
 
 
-
 observe_request = observe_request
 report_error = report_error
 class APIToolkit:
@@ -16,6 +15,7 @@ class APIToolkit:
         self.redact_request_body = redact_request_body
         self.redact_response_body = redact_response_body
         self.service_version = service_version
+        self.service_name = service_name
         self.tags = tags
         self.config = {
             'redact_headers': redact_headers,
@@ -30,7 +30,7 @@ class APIToolkit:
         }
 
     def beforeRequest(self):
-        tracer = get_tracer(self.service_name)
+        tracer = get_tracer(self.service_name or "apitoolkit-http-tracer")
         span = tracer.start_span("apitoolkit-http-span")
         if self.debug:
             print("APIToolkit: beforeRequest")
@@ -40,7 +40,7 @@ class APIToolkit:
         request_body = None
         query_params = request.args.copy().to_dict()
         path_params = request.view_args.copy() if request.view_args is not None else {}
-        request_headers = self.redact_headers_func(dict(request.headers))
+        request_headers = dict(request.headers)
         content_type = request.headers.get('Content-Type', '')
 
         if content_type == 'application/json':
@@ -69,11 +69,6 @@ class APIToolkit:
     def afterRequest(self, response):
         if self.debug:
             print("APIToolkit: afterRequest")
-
-        if self.meta is None:
-          if self.debug:
-            print("APIToolkit: Project ID not set (restart your server to fix)")
-          return
 
         apitoolkit_request_data = g.get("apitoolkit_request_data", {})
         status_code = response.status_code
