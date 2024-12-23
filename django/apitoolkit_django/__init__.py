@@ -2,6 +2,7 @@ import uuid
 import json
 from opentelemetry.trace import get_tracer
 from django.conf import settings
+import traceback
 from common import observe_request, report_error, set_attributes
 
 observe_request = observe_request
@@ -11,6 +12,7 @@ class APIToolkit:
         redact_headers = getattr(
             settings, 'APITOOLKIT_REDACT_HEADERS', [])
         debug = getattr(settings, 'APITOOLKIT_DEBUG', False)
+        self.debug = debug
         redact_request_body = getattr(
             settings, 'APITOOLKIT_REDACT_REQUEST_BODY', [])
         redact_response_body = getattr(
@@ -40,7 +42,7 @@ class APIToolkit:
         pass
 
     def __call__(self, request):
-        tracer = get_tracer(self.service_name)
+        tracer = get_tracer(self.config['service_name'] or "apitoolkit-http-tracer")
         span = tracer.start_span("apitoolkit-http-span")
         if self.debug:
             print("APIToolkit: making request")
@@ -48,9 +50,8 @@ class APIToolkit:
         raw_url = request.get_full_path()
         request_body = None
         query_params = dict(request.GET.copy())
-        request_headers = self.redact_headers_func(request.headers)
+        request_headers = request.headers
         content_type = request.headers.get('Content-Type', '')
-
         if content_type == 'application/json':
             request_body = json.loads(request.body.decode('utf-8'))
         if content_type == 'text/plain':
@@ -69,7 +70,7 @@ class APIToolkit:
             path_params = request.resolver_match.kwargs if request.resolver_match is not None else {}
             status_code = response.status_code
             request_body = json.dumps(request_body)
-            response_headers = self.redact_headers_func(response.headers)
+            response_headers = response.headers
             request_body = request_body
             response_body = response.content.decode('utf-8')
             message_id = request.apitoolkit_message_id
@@ -97,3 +98,4 @@ class APIToolkit:
         except Exception as e:
             return response
         return response
+

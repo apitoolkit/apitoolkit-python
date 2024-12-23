@@ -46,8 +46,8 @@ def set_attributes(
             "http.request.path_params": json.dumps(path_params),
             "apitoolkit.sdk_type": sdk_type,
             "apitoolkit.parent_id": parent_id or "",
-            "http.request.body":  b64encode(redact_fields(req_body, config.get("redact_request_body", [])).encode()).decode(),
-            "http.response.body": b64encode(redact_fields(resp_body, config.get("redact_response_body", [])).encode()).decode(),
+            "http.request.body":  b64encode(redact_fields(req_body, config.get("redact_request_body", []))).decode(),
+            "http.response.body": b64encode(redact_fields(resp_body, config.get("redact_response_body", []))).decode(),
             "apitoolkit.errors": json.dumps(errors),
             "apitoolkit.service_version": config.get("serviceVersion", ""),
             "apitoolkit.tags": json.dumps(config.get("tags", [])),
@@ -73,7 +73,7 @@ def observe_request(parent_request, url_wildcard=None,redact_headers=[], redact_
     def on_request(request):
         nonlocal start_time, req, span
         # create an open telemetry span
-        tracer = get_tracer("your-service-name")
+        tracer = get_tracer("apitoolkit-http-tracer")
         span = tracer.start_span("apitoolkit-http-span")
         req = request
         return request
@@ -95,15 +95,14 @@ def observe_request(parent_request, url_wildcard=None,redact_headers=[], redact_
         res_body = response.text
         req_headers = dict((k, v if isinstance(v, list) else [v]) for k, v in req.headers.items())
         res_headers = dict((k, v if isinstance(v, list) else [v]) for k, v in (response.headers if response else {}).items())
-        config = {redact_headers: redact_headers, redact_request_body: redact_request_body, redact_response_body: redact_response_body}
+        config = {"redact_headers": redact_headers, "redact_request_body": redact_request_body, "redact_response_body": redact_response_body}
         set_attributes(
             span, host, response.status_code,
-            path_and_query["queryParams"], req.path_params,
+            path_and_query["queryParams"], {},
             req_headers, res_headers, req.method.upper() if req.method else "",
-            req.url.geturl(), message_id, url_path, req_body, res_body, [], config, sdk_type="PythonHTTPX")
+            req.url.path, message_id, url_path, req_body, res_body, [], config, sdk_type="PythonOutgoing")
       except Exception as e:
-        if config.get("debug", False):
-            print("Error publishing message to apitoolkit: " + str(e))
+          pass
 
     client = httpx.Client(event_hooks={'request': [
         on_request], 'response': [on_response]})
