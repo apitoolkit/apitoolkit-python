@@ -34,6 +34,7 @@ class APIToolkit:
         self.redact_response_body = []
         self.service_version = service_version
         self.tags = tags
+        self.service_name = service_name
         self.debug = False
         if debug:
             print("APIToolkit: initialize")
@@ -54,7 +55,7 @@ class APIToolkit:
         }
 
     async def middleware(self, request: Request, call_next):
-        tracer = get_tracer(self.service_name)
+        tracer = get_tracer(self.service_name or "apitoolkit-http-tracer")
         span = tracer.start_span("apitoolkit-http-span")
         if self.debug:
             print("APIToolkit: middleware")
@@ -98,19 +99,19 @@ class APIToolkit:
                   span,
                   host,
                   status_code,
-                  request.query_params,
-                  request.path_params,
-                  request.headers,
+                  dict(request.query_params),
+                  dict(request.path_params),
                   dict(request.headers),
                   dict(res_headers),
+                  request.method,
                   full_path,
                   message_id,
                   route_pattern,
                   request_body,
-                  response_body,
+                  b''.join(response_body),
                   errors,
                   self.config,
-                  "PythonFastAPI"
+                  "PythonFastApi"
               )
             else:
                 if self.debug:
