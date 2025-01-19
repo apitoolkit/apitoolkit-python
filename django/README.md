@@ -43,7 +43,7 @@ export OTEL_EXPORTER_OTLP_ENDPOINT="http://otelcol.apitoolkit.io:4317"
 export OTEL_SERVICE_NAME="my-service" # Specifies the name of the service.
 export OTEL_RESOURCE_ATTRIBUTES="at-project-key={ENTER_YOUR_API_KEY_HERE}" # Adds your API KEY to the resource.
 export OTEL_EXPORTER_OTLP_PROTOCOL="grpc" # Specifies the protocol to use for the OpenTelemetry exporter.
-export DJANGO_SETTINGS_MODULE="myapp.settings" # Specifies the Django settings module to use.
+export DJANGO_SETTINGS_MODULE="{YOUR_DJANGO_SERVER_NAME}.settings" # Specifies the Django settings module to use.
 ```
 
 Then run the command below to start your server with opentelemetry instrumented:
@@ -96,8 +96,9 @@ MIDDLEWARE = [
 > [!NOTE]
 >
 > The `{ENTER_YOUR_API_KEY_HERE}` demo string should be replaced with the [API key](https://apitoolkit.io/docs/dashboard/settings-pages/api-keys?utm_campaign=devrel&utm_medium=github&utm_source=sdks_readme) generated from the APItoolkit dashboard.
-
-<br />
+>
+> The `{YOUR_DJANGO_SERVER_NAME}` demo string should be replaced with the name of your Django server.
+> <br />
 
 > [!IMPORTANT]
 >
