@@ -2,7 +2,6 @@ import uuid
 import json
 from opentelemetry.trace import get_tracer
 from django.conf import settings
-import traceback
 from common import observe_request, report_error, set_attributes
 
 observe_request = observe_request
@@ -96,6 +95,8 @@ class APIToolkit:
                 "PythonDjango"
             )
         except Exception as e:
+            span.record_exception(e)
+            span.end()
             return response
         return response
 
